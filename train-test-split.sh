@@ -16,7 +16,7 @@ clusters.
     echo "Arguments:"
     echo "    <input_file>: The path to the input .fasta/.faa file."
     echo "    --cd-hit <cd-hit_binary_path>: The path to the CD-Hit binary (optional, \
-    will use '/usr/bin/cd-hit' by default)."
+    will use '/usr/local/bin/cd-hit' by default)."
     echo "    -h : Display this help message."
   exit 0
 fi
@@ -35,7 +35,7 @@ if [ ! -f "$1" ]; then
 fi
 
 # Set the default binary path if not provided
-binary_path="/usr/bin/cd-hit"
+binary_path="/usr/local/bin/cd-hit"
 
 # Check if the --cd-hit flag is provided
 if [ "$2" = "--cd-hit" ]; then
@@ -59,6 +59,9 @@ fi
 # Modify the $1 variable and edit the extension to be ".hashed.fasta"
 hashed_fasta_file="${1%.*}.hashed.fasta"
 
+echo "" > MD5_lookup.tmp
+echo "" > "$hashed_fasta_file"
+
 # Open the file
 while IFS= read -r line; do
     # Check if the line starts with ">"
@@ -67,16 +70,16 @@ while IFS= read -r line; do
         sequence_name="${line:1}"
 
         # Calculate the MD5 hash
-        md5_hash=$(echo -n "$sequence_name" | md5sum | awk '{print $1}')
+        md5_hash=$(echo -n "$sequence_name" | md5 | awk '{print $1}')
 
         # Replace the line with the MD5 hash
-        line=">$md5_hash"
+        updated_line=">$md5_hash"
 
         # Write the MD5 hash and source string to the file
         echo "$md5_hash $sequence_name" >> MD5_lookup.tmp
 
         # Write the MD5 hash to the hashed fasta file
-        echo "$md5_hash" >> "$hashed_fasta_file"
+        echo "$updated_line" >> "$hashed_fasta_file"
     else
         # Write the sequence to the hashed fasta file
         echo "$line" >> "$hashed_fasta_file"
@@ -85,12 +88,19 @@ while IFS= read -r line; do
 done < "$1"
 
 
+# Remove newline characters
+awk '!/^>/ { printf "%s", $0; n = "\n" } 
+    /^>/ { print n $0; n = "" }
+    END { printf "%s", n }
+    ' "$hashed_fasta_file" > temp.fasta
+
 # Run CD-Hit
 # Modify the $1 variable and edit the extension to be ".cdhit.fasta"
 cdhit_fasta_file="${1%.*}.cdhit.fasta"
 $binary_path \
     -c 0.4 \
     -n 2 \
+    -d 100 \
     -M 0 \
     -T 0 \
     -sc 1 \
