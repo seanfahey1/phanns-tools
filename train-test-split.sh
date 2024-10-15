@@ -54,6 +54,20 @@ if [ ! -x "$binary_path" ]; then
     exit 1
 fi
 
+# Set the MD5 tool to use
+if command -v md5 2>&1 >/dev/null
+    then
+        md5cmd="md5"
+    else
+    if command -v md5sum 2>&1 >/dev/null
+        then
+            md5cmd="md5sum"
+        else
+            echo "Error: No MD5 command found."
+            exit 1
+    fi
+fi
+echo "MD5 command: $md5cmd"
 
 # Hash fasta file
 # Modify the $1 variable and edit the extension to be ".hashed.fasta"
