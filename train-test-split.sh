@@ -5,16 +5,26 @@ set -e
 
 # Print help message if requested
 if [ "$1" == "-h" ]; then
+    echo "This script will split the sequences in a .fasta/.faa file, cluster them 
+using CD-Hit at 40% sequence identity with a word length of 2, split the 
+clusters into 11 groups, and rebuild a fasta file for each of those
+clusters.
+"
+
     echo "Usage: `basename $0` <input_file> [--cd-hit <cd-hit_binary_path>]"
-    echo "    <input_file> : The path to the input .fasta/.faa file."
-    echo "    --cd-hit <cd-hit_binary_path> : The path to the CD-Hit binary (optional, will use `/usr/bin/cd-hit` by default)."
+    echo ""
+    echo "Arguments:"
+    echo "    <input_file>: The path to the input .fasta/.faa file."
+    echo "    --cd-hit <cd-hit_binary_path>: The path to the CD-Hit binary (optional, \
+    will use '/usr/bin/cd-hit' by default)."
     echo "    -h : Display this help message."
   exit 0
 fi
 
 # Check if the required argument is provided
 if [ -z "$1" ]; then
-    echo "Error: Please provide a path to a .fasta/.faa formatted file as the first argument."
+    echo "Error: Please provide a path to a .fasta/.faa formatted file as the first \
+    argument."
     exit 1
 fi
 

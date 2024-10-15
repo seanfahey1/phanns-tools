@@ -163,4 +163,4 @@ cython_debug/
 
 
 .python-version
-./test-data/*
+test-data
