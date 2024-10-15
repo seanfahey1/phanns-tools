@@ -84,7 +84,7 @@ while IFS= read -r line; do
         sequence_name="${line:1}"
 
         # Calculate the MD5 hash
-        md5_hash=$(echo -n "$sequence_name" | md5 | awk '{print $1}')
+        md5_hash=$(echo -n "$sequence_name" | "$md5cmd" | awk '{print $1}')
 
         # Replace the line with the MD5 hash
         updated_line=">$md5_hash"
