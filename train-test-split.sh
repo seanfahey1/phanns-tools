@@ -57,6 +57,8 @@ if [ ! -x "$binary_path" ]; then
     exit 1
 fi
 
+echo "CD-Hit binary path: $binary_path"
+
 # Set the MD5 tool to use
 if command -v md5 2>&1 >/dev/null
     then
@@ -70,12 +72,15 @@ if command -v md5 2>&1 >/dev/null
             exit 1
     fi
 fi
-echo "MD5 command: $md5cmd"
+echo "Using MD5 command: $md5cmd"
 
 
 # Setup the file names for each step
 input_file_basename=$(basename $1)
 input_file_class=${input_file_basename%.*}
+
+echo "Input file: $input_file_basename"
+echo "Input file class: $input_file_class"
 
 hashed_fasta_file="$temp_dir/${input_file_class}.hashed.fasta"
 hashed_fasta_file_clean="$temp_dir/${input_file_class}.hashed.clean.fasta"
@@ -84,6 +89,7 @@ hashed_fasta_file_lookup="$temp_dir/${input_file_class}.hashed.lookup.fasta"
 md5_lookup_file="$temp_dir/MD5_lookup.tmp"
 
 
+echo "Checking for existing output files to prevent overwrites..."
 # Error out if cluster files exist
 for counter in {1..11}; do
     if [ -f "$counter"_"$input_file_class".fasta ]; then
@@ -98,6 +104,7 @@ echo "" > "$md5_lookup_file"
 echo "" > "$hashed_fasta_file"
 
 
+echo "Hashing input file headers"
 # Hash fasta file
 while IFS= read -r line; do
     # Check if the line starts with ">"
@@ -123,7 +130,7 @@ while IFS= read -r line; do
 
 done < "$1"
 
-
+echo "Cleaning up the hashed fasta file"
 # Remove unnecessary newline characters
 awk '!/^>/ { printf "%s", $0; n = "\n" } 
     /^>/ { print n $0; n = "" }
@@ -138,6 +145,7 @@ awk '{if ($0 !~ /^>/) {print} \
 
 
 # Run CD-Hit
+echo "Running CD-Hit"
 # Modify the $1 variable and edit the extension to be ".cdhit.fasta"
 cdhit_fasta_file="$temp_dir"/"$input_file_class.cdhit.fasta"
 $binary_path \
@@ -160,11 +168,12 @@ awk -v temp_dir="$temp_dir" \
     "$cdhit_fasta_file".clstr
 
 
+echo "Parsing CD-Hit clusters"
 # Loop chunk files (clusters) and rebuild fasta files
 counter=1
-for file in "$temp_dir"/chunk*; do
+for file in $(ls "$temp_dir"/chunk* | sort -V); do
     current_file="$counter"_"$input_file_class".fasta
-    echo $file $current_file
+    echo "writing hashes from $(basename $file) to $current_file"
 
     # get only hash portions of the cluster
     grep -o ">[A-Za-z0-9]*\.\.\." "$file" | cut -c 2-33 | while read -r line; do
@@ -178,7 +187,7 @@ for file in "$temp_dir"/chunk*; do
         while read -r line3; do
             [[ $line3 == *"$line"* ]] && echo "$line3" | cut -d " " -f 2- >> "$current_file"
         done < "$hashed_fasta_file_lookup"
-        sleep 0.0001
+        sleep 0.000001
 
     done
 
@@ -186,7 +195,6 @@ for file in "$temp_dir"/chunk*; do
     if (( counter > 11 )); then
         counter=1
     fi
-    echo $counter
 
 done
 
