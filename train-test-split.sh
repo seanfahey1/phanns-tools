@@ -18,8 +18,8 @@ clusters.
     echo ""
     echo "Arguments:"
     echo "    <input_file>: The path to the input .fasta/.faa file."
-    echo "    --cd-hit <cd-hit_binary_path>: The path to the CD-Hit binary (optional, \
-    will use '/usr/local/bin/cd-hit' by default)."
+    echo "    --cd-hit <cd-hit_binary_path>: The path to the CD-Hit binary \
+(optional, will use '/usr/local/bin/cd-hit' by default)."
     echo "    -h : Display this help message."
   exit 0
 fi
@@ -151,9 +151,8 @@ $binary_path \
     -i "$hashed_fasta_file" \
     -o "$cdhit_fasta_file"
 
-# only for testing
-cp ./test-data/collar.cdhit.fasta.clstr "$cdhit_fasta_file".clstr
 
+# Split the CD-Hit output into chunk files
 awk -v temp_dir="$temp_dir" \
     '/^>Cluster .*/ \
     {filename = temp_dir "/chunk" ++i ".txt"} \
