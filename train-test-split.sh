@@ -3,6 +3,9 @@
 # make sure the script will fail hard if any error is raised
 set -e
 
+# Start tracking time
+SECONDS=0
+
 # Set the path to write temporary files
 temp_dir=$(mktemp -d)
 
@@ -172,7 +175,7 @@ echo "Parsing CD-Hit clusters"
 # Loop chunk files (clusters) and rebuild fasta files
 counter=1
 for file in $(ls "$temp_dir"/chunk* | sort -V); do
-    current_file="$counter"_"$input_file_class".fasta
+    current_file="$counter"_"$input_file_class".fasta.incomplete
     echo "writing hashes from $(basename $file) to $current_file"
 
     # get only hash portions of the cluster
@@ -200,3 +203,10 @@ done
 
 # Clean up
 rm -rf "$temp_dir"
+
+echo "Marking fasta files as complete"
+for file in *.fasta.incomplete; do
+    mv "$file" "${file%.incomplete}"
+done
+
+echo "Done! Total runtime: $SECONDS seconds"
