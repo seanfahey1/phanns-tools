@@ -3,6 +3,9 @@
 # make sure the script will fail hard if any error is raised
 set -e
 
+# Set the path to write temporary files
+temp_dir=$(mktemp -d)
+
 # Print help message if requested
 if [ "$1" == "-h" ]; then
     echo "This script will split the sequences in a .fasta/.faa file, cluster them 
@@ -69,14 +72,33 @@ if command -v md5 2>&1 >/dev/null
 fi
 echo "MD5 command: $md5cmd"
 
-# Hash fasta file
-# Modify the $1 variable and edit the extension to be ".hashed.fasta"
-hashed_fasta_file="${1%.*}.hashed.fasta"
 
-echo "" > MD5_lookup.tmp
+# Setup the file names for each step
+input_file_basename=$(basename $1)
+input_file_class=${input_file_basename%.*}
+
+hashed_fasta_file="$temp_dir/${input_file_class}.hashed.fasta"
+hashed_fasta_file_clean="$temp_dir/${input_file_class}.hashed.clean.fasta"
+hashed_fasta_file_lookup="$temp_dir/${input_file_class}.hashed.lookup.fasta"
+
+md5_lookup_file="$temp_dir/MD5_lookup.tmp"
+
+
+# Error out if cluster files exist
+for counter in {1..11}; do
+    if [ -f "$counter"_"$input_file_class".fasta ]; then
+        echo "Error: "$counter"_"$input_file_class".fasta already exist. Please remove them before running this script."
+        exit 1
+    fi
+done
+
+
+# Create empty files
+echo "" > "$md5_lookup_file"
 echo "" > "$hashed_fasta_file"
 
-# Open the file
+
+# Hash fasta file
 while IFS= read -r line; do
     # Check if the line starts with ">"
     if [[ $line == ">"* ]]; then
@@ -90,7 +112,7 @@ while IFS= read -r line; do
         updated_line=">$md5_hash"
 
         # Write the MD5 hash and source string to the file
-        echo "$md5_hash $sequence_name" >> MD5_lookup.tmp
+        echo "$md5_hash $sequence_name" >> "$md5_lookup_file"
 
         # Write the MD5 hash to the hashed fasta file
         echo "$updated_line" >> "$hashed_fasta_file"
@@ -102,15 +124,22 @@ while IFS= read -r line; do
 done < "$1"
 
 
-# Remove newline characters
+# Remove unnecessary newline characters
 awk '!/^>/ { printf "%s", $0; n = "\n" } 
     /^>/ { print n $0; n = "" }
     END { printf "%s", n }
-    ' "$hashed_fasta_file" > temp.fasta
+    ' "$hashed_fasta_file" > "$hashed_fasta_file_clean"
+
+# Remove ALL newline characters for sequence lookup from hash later
+awk '{if ($0 !~ /^>/) {print} \
+    else {printf "%s ", $0}} \
+    END {print ""}' \
+    "$hashed_fasta_file_clean" > "$hashed_fasta_file_lookup"
+
 
 # Run CD-Hit
 # Modify the $1 variable and edit the extension to be ".cdhit.fasta"
-cdhit_fasta_file="${1%.*}.cdhit.fasta"
+cdhit_fasta_file="$temp_dir"/"$input_file_class.cdhit.fasta"
 $binary_path \
     -c 0.4 \
     -n 2 \
@@ -122,4 +151,45 @@ $binary_path \
     -i "$hashed_fasta_file" \
     -o "$cdhit_fasta_file"
 
+# only for testing
+cp ./test-data/collar.cdhit.fasta.clstr "$cdhit_fasta_file".clstr
 
+awk -v temp_dir="$temp_dir" \
+    '/^>Cluster .*/ \
+    {filename = temp_dir "/chunk" ++i ".txt"} \
+    filename {print > filename}' \
+    "$cdhit_fasta_file".clstr
+
+
+# Loop chunk files (clusters) and rebuild fasta files
+counter=1
+for file in "$temp_dir"/chunk*; do
+    current_file="$counter"_"$input_file_class".fasta
+    echo $file $current_file
+
+    # get only hash portions of the cluster
+    grep -o ">[A-Za-z0-9]*\.\.\." "$file" | cut -c 2-33 | while read -r line; do
+
+        # get the sequence name from the hash
+        while read -r line2; do
+            [[ $line2 == *"$line"* ]] && echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
+        done < "$md5_lookup_file"
+
+        # get the sequence from the hash
+        while read -r line3; do
+            [[ $line3 == *"$line"* ]] && echo "$line3" | cut -d " " -f 2- >> "$current_file"
+        done < "$hashed_fasta_file_lookup"
+        sleep 0.0001
+
+    done
+
+    counter=$((counter+1))
+    if (( counter > 11 )); then
+        counter=1
+    fi
+    echo $counter
+
+done
+
+# Clean up
+rm -rf "$temp_dir"
