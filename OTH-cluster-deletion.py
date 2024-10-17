@@ -83,7 +83,7 @@ def digest_clusters(cluster_file_path):
 
     for cluster in clusters:
         # clean up cluster
-        cluster_lines = [x for x in cluster.split("\n").strip() if x != ""]
+        cluster_lines = [x.strip() for x in cluster.split("\n") if x.strip() != ""]
 
         # pull just descriptions
         descriptions = [
@@ -136,7 +136,7 @@ def main():
         SeqIO.write(all_records, f, "fasta")
 
     # cluster sequences
-    results = cd_hit(f"{args.now}combined.fasta", f"{args.now}combined_out.fasta")
+    # results = cd_hit(f"{args.now}combined.fasta", f"{args.now}combined_out.fasta")
 
     for source_file, seq_hash in digest_clusters(
         Path(f"{args.now}combined_out.fasta.clstr")
