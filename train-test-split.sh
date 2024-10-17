@@ -188,11 +188,6 @@ $(basename $file) to $current_file"
         while read -r line2; do
             if [[ $line2 == "$line"* ]]; then 
                 echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
-
-                # Delete the matched line from the file
-                escaped_line=$(printf '%s\n' "$line2" | sed 's/[\/&]/\\&/g')
-                sed -i "/^$escaped_line/d" "$md5_lookup_file"
-
                 break
             fi
         done < "$md5_lookup_file"
@@ -201,11 +196,6 @@ $(basename $file) to $current_file"
         while read -r line3; do
             if [[ $line3 == ">$line"* ]]; then
                 echo "$line3" | cut -d " " -f 2- >> "$current_file"
-
-                # Delete the matched line from the file
-                escaped_line=$(printf '%s\n' "$line3" | sed 's/[\/&]/\\&/g')
-                sed -i "/^$escaped_line/d" "$hashed_fasta_file_lookup"
-
                 break
             fi
         done < "$hashed_fasta_file_lookup"
