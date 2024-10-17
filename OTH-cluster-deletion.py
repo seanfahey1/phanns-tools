@@ -84,7 +84,7 @@ def digest_clusters(cluster_file_path):
 
     for cluster in clusters:
         # clean up cluster
-        cluster_lines = [x.strip() for x in cluster.split("\n") if x.strip() != ""]
+        cluster_lines = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
 
         # pull just descriptions
         descriptions = []
