@@ -1,2 +1,10 @@
 # phanns-tools
-Tools for structuring data for the PhANNs 3.0 model
+`phanns-tools` is a collection of python and bash scripts used to structure data prior
+to training PhANNs 3.0 models.
+
+
+### OTH-cluster-deletion.py
+
+
+#### train-test-split.sh
+
