@@ -162,6 +162,7 @@ $binary_path \
     -i "$hashed_fasta_file" \
     -o "$cdhit_fasta_file"
 
+# cp test-data/collar.cdhit.fasta.clstr "$cdhit_fasta_file".clstr
 
 # Split the CD-Hit output into chunk files
 awk -v temp_dir="$temp_dir" \
@@ -184,15 +185,15 @@ for file in $(ls "$temp_dir"/chunk* | sort -V); do
         while read -r line2; do
             if [[ $line2 == "$line"* ]]; then 
                 echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
-                break
+                # break
             fi
         done < "$md5_lookup_file"
 
         # get the sequence from the hash
         while read -r line3; do
-            if [[ $line3 == "$line"* ]]; then
+            if [[ $line3 == ">$line"* ]]; then
                 echo "$line3" | cut -d " " -f 2- >> "$current_file"
-                break
+                # break
             fi
         done < "$hashed_fasta_file_lookup"
         sleep 0.000001
@@ -209,9 +210,14 @@ done
 # Clean up
 rm -rf "$temp_dir"
 
-echo "Marking fasta files as complete"
+echo "Marking fasta files as complete and adding line breaks"
 for file in *.fasta.incomplete; do
-    mv "$file" "${file%.incomplete}"
+    awk '{ if ($0 ~ /^>/) { print $0 } \
+    else { while (length($0) > 80) \
+    { print substr($0, 1, 80); $0 = substr($0, 81) } print $0 } }' \
+    "$file" > "${file%.incomplete}"
+
+    rm "$file"
 done
 
 echo "Done! Total runtime: $SECONDS seconds"
