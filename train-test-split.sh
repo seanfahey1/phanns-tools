@@ -185,7 +185,7 @@ for file in $(ls "$temp_dir"/chunk* | sort -V); do
         while read -r line2; do
             if [[ $line2 == "$line"* ]]; then 
                 echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
-                # break
+                break
             fi
         done < "$md5_lookup_file"
 
@@ -193,7 +193,7 @@ for file in $(ls "$temp_dir"/chunk* | sort -V); do
         while read -r line3; do
             if [[ $line3 == ">$line"* ]]; then
                 echo "$line3" | cut -d " " -f 2- >> "$current_file"
-                # break
+                break
             fi
         done < "$hashed_fasta_file_lookup"
         sleep 0.000001
