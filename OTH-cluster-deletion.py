@@ -56,15 +56,15 @@ def get_args():
 
 
 def cd_hit(input_file, output_file, **kwargs):
-    cmd = f"""cd-hit
-        -i {input_file}
-        -o {output_file}
-        -c {kwargs.get("c", 0.4)}
-        -n {kwargs.get("n", 2)}
-        -d 0
-        -M 0
-        -T 0
-        -sc 1
+    cmd = f"""cd-hit\
+        -i {input_file}\
+        -o {output_file}\
+        -c {kwargs.get("c", 0.4)}\
+        -n {kwargs.get("n", 2)}\
+        -d 0\
+        -M 0\
+        -T 0\
+        -sc 1\
         -sf 1
     """
 
