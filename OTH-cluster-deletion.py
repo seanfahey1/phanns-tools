@@ -90,7 +90,7 @@ def digest_clusters(cluster_file_path):
         descriptions = []
         for line in cluster_lines:
             try:
-                descriptions.append(str(re.search("\d+aa, >(.*@@@-?\d*)\.\.\.", line).group(1)))
+                descriptions.append(str(re.search("\d+\s+aa,\s+>(.*@@@-?\d*)\.\.\.", line).group(1)))
             except AttributeError:
                 print(cluster)
                 print("")
