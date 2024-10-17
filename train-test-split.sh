@@ -176,19 +176,24 @@ echo "Parsing CD-Hit clusters"
 counter=1
 for file in $(ls "$temp_dir"/chunk* | sort -V); do
     current_file="$counter"_"$input_file_class".fasta.incomplete
-    echo "writing hashes from $(basename $file) to $current_file"
+    echo "writing $(wc -l < $file | xargs) hashes from $(basename $file) to $current_file"
 
     # get only hash portions of the cluster
     grep -o ">[A-Za-z0-9]*\.\.\." "$file" | cut -c 2-33 | while read -r line; do
-
         # get the sequence name from the hash
         while read -r line2; do
-            [[ $line2 == *"$line"* ]] && echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
+            if [[ $line2 == "$line"* ]]; then 
+                echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
+                break
+            fi
         done < "$md5_lookup_file"
 
         # get the sequence from the hash
         while read -r line3; do
-            [[ $line3 == *"$line"* ]] && echo "$line3" | cut -d " " -f 2- >> "$current_file"
+            if [[ $line3 == "$line"* ]]; then
+                echo "$line3" | cut -d " " -f 2- >> "$current_file"
+                break
+            fi
         done < "$hashed_fasta_file_lookup"
         sleep 0.000001
 
