@@ -87,10 +87,15 @@ def digest_clusters(cluster_file_path):
         cluster_lines = [x.strip() for x in cluster.split("\n") if x.strip() != ""]
 
         # pull just descriptions
-        descriptions = [
-            str(re.search("\d+aa, >(.*@@@-?\d*)\.\.\.", x).group(1))
-            for x in cluster_lines
-        ]
+        descriptions = []
+        for line in cluster_lines:
+            try:
+                descriptions.append(str(re.search("\d+aa, >(.*@@@-?\d*)\.\.\.", line).group(1)))
+            except AttributeError:
+                print(cluster)
+                print("")
+                print(line)
+                raise AttributeError
 
         # skip non-mixed clusters
         source_files = [x.split("@@@")[0] for x in descriptions]
