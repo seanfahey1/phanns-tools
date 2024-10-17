@@ -51,7 +51,8 @@ def get_args():
     if args.output is None:
         args.output = args.target.with_suffix(".filtered")
     args.now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S_")
-
+    
+    args.now = '2024_10_17_16_01_21_'
     return args
 
 
