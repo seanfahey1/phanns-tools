@@ -172,7 +172,8 @@ awk -v temp_dir="$temp_dir" \
     "$cdhit_fasta_file".clstr
 
 
-echo "Parsing CD-Hit clusters"
+echo "Parsing $(wc -l $temp_dir/chunk*.txt | xargs) CD-Hit clusters"
+
 # Loop chunk files (clusters) and rebuild fasta files
 counter=1
 for file in $(ls "$temp_dir"/chunk* | sort -V); do
