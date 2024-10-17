@@ -96,7 +96,8 @@ echo "Checking for existing output files to prevent overwrites..."
 # Error out if cluster files exist
 for counter in {1..11}; do
     if [ -f "$counter"_"$input_file_class".fasta ]; then
-        echo "Error: "$counter"_"$input_file_class".fasta already exist. Please remove them before running this script."
+        echo "Error: "$counter"_"$input_file_class".fasta already exist. Please remove \
+them before running this script."
         exit 1
     fi
 done
@@ -178,7 +179,8 @@ echo "Parsing $(wc -l $temp_dir/chunk*.txt | xargs) CD-Hit clusters"
 counter=1
 for file in $(ls "$temp_dir"/chunk* | sort -V); do
     current_file="$counter"_"$input_file_class".fasta.incomplete
-    echo "writing $(wc -l < $file | xargs) hashes from $(basename $file) to $current_file"
+    echo "writing $(wc -l < $file | xargs) hashes from \
+$(basename $file) to $current_file"
 
     # get only hash portions of the cluster
     grep -o ">[A-Za-z0-9]*\.\.\." "$file" | cut -c 2-33 | while read -r line; do
