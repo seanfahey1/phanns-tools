@@ -190,7 +190,8 @@ $(basename $file) to $current_file"
                 echo $line2 | cut -d " " -f 2- | sed 's/^/>/' >> "$current_file"
 
                 # Delete the matched line from the file
-                sed -i "/^$line2/d" "$hashed_fasta_file_lookup"
+                escaped_line=$(printf '%s\n' "$line2" | sed 's/[\/&]/\\&/g')
+                sed -i "/^$escaped_line/d" "$md5_lookup_file"
 
                 break
             fi
@@ -202,7 +203,8 @@ $(basename $file) to $current_file"
                 echo "$line3" | cut -d " " -f 2- >> "$current_file"
 
                 # Delete the matched line from the file
-                sed -i "/^$line3/d" "$hashed_fasta_file_lookup"
+                escaped_line=$(printf '%s\n' "$line3" | sed 's/[\/&]/\\&/g')
+                sed -i "/^$escaped_line/d" "$hashed_fasta_file_lookup"
 
                 break
             fi
