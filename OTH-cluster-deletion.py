@@ -139,7 +139,7 @@ def main():
         record.name = ""
         record.description = ""
         all_records.append(record)
-        target_hash_lookup[seq_hash] = (record.description, str(record.seq))
+        target_hash_lookup[str(seq_hash)] = (record.description, str(record.seq))
 
     for record in SeqIO.parse(args.reference, "fasta"):
         file_stem = args.reference.stem
