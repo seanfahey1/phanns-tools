@@ -109,6 +109,7 @@ def digest_clusters(cluster_file_path):
         # skip non-mixed clusters
         source_files = [x.split("@@@")[0] for x in descriptions]
         if len(set(source_files)) == 1:
+            print(source_files, descriptions)
             continue
 
         for line in descriptions:
