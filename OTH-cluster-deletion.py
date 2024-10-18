@@ -45,7 +45,7 @@ def get_args():
         "--output",
         type=str,
         default=None,
-        help='Output fasta file. Default: target file with suffix ".filtered"',
+        help='Output fasta file. Default: target file with suffix ".filtered.fasta"',
     )
     parser.add_argument(
         '-jid',
@@ -58,7 +58,7 @@ def get_args():
     args = parser.parse_args()
 
     if args.output is None:
-        args.output = args.target.with_suffix(".filtered")
+        args.output = args.target.with_suffix(".filtered.fasta")
     if args.job_id is None:
         args.job_id = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
@@ -159,6 +159,7 @@ def main():
     for source_file, seq_hash in digest_clusters(
         Path(f"{args.job_id}_combined_out.fasta.clstr")
     ):
+        print(source_file, args.target.stem)
         if source_file == args.target.stem:
             if seq_hash not in target_hash_lookup:
                 raise ValueError(
