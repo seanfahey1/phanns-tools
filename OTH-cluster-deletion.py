@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import re
 import subprocess
@@ -135,6 +137,7 @@ def main():
 
         seq_hash = str(hash(record.seq))
         record.id = f"{file_stem}@@@{seq_hash}"
+        record.name = ""
         record.description = ""
         all_records.append(record)
 
