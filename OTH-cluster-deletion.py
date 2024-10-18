@@ -155,7 +155,7 @@ def main():
         SeqIO.write(all_records, f, "fasta")
 
     # cluster sequences
-    results = cd_hit(f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta")
+#    results = cd_hit(f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta")
 
     for source_file, seq_hash in digest_clusters(
         Path(f"{args.job_id}_combined_out.fasta.clstr")
