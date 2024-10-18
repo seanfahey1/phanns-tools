@@ -101,10 +101,7 @@ def digest_clusters(cluster_file_path):
             try:
                 descriptions.append(str(re.search("\d+aa,\s+>(.*@@@-?\d*)\.\.\.", line).group(1)))
             except AttributeError:
-                print(cluster)
-                print("")
-                print(line)
-                raise AttributeError
+                raise AttributeError(f"Could not parse line:\n{line}\nfrom cluster:\n{cluster}")
 
         # skip non-mixed clusters
         source_files = [x.split("@@@")[0] for x in descriptions]
@@ -131,6 +128,7 @@ def main():
     all_records = []
 
     # combine files with hashed headers
+    print("Bundling fasta files")
     for record in SeqIO.parse(args.target, "fasta"):
         file_stem = args.target.stem
 
@@ -156,19 +154,22 @@ def main():
         SeqIO.write(all_records, f, "fasta")
 
     # cluster sequences
+    print("Clustering sequences")
     results = cd_hit(f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta")
 
+    print("Searching clusters")
     for source_file, seq_hash in digest_clusters(
         Path(f"{args.job_id}_combined_out.fasta.clstr")
     ):
-        print(source_file, seq_hash, args.target.stem)
         if source_file == args.target.stem:
             if seq_hash not in target_hash_lookup:
                 raise ValueError(
                     f"Hash from {source_file} not found in target lookup: {seq_hash}"
                 )
 
-            removed_records[seq_hash] = target_hash_lookup.pop(seq_hash)
+            removed_record = target_hash_lookup.pop(seq_hash)
+            removed_records[seq_hash] = removed_record
+            print("\tRemoved:", removed_record[0])
 
     write_dict_to_fasta(target_hash_lookup, args.output)
     write_dict_to_fasta(
