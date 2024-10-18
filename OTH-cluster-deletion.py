@@ -133,13 +133,14 @@ def main():
 
     # combine files with hashed headers
     for record in SeqIO.parse(args.target, "fasta"):
-        file_stem = args.reference.stem
+        file_stem = args.target.stem
 
         seq_hash = str(hash(record.seq))
         record.id = f"{file_stem}@@@{seq_hash}"
         record.name = ""
         record.description = ""
         all_records.append(record)
+        target_hash_lookup[seq_hash] = (record.description, record.seq)
 
     for record in SeqIO.parse(args.reference, "fasta"):
         file_stem = args.reference.stem
