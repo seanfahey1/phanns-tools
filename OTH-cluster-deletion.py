@@ -47,14 +47,21 @@ def get_args():
         default=None,
         help='Output fasta file. Default: target file with suffix ".filtered"',
     )
+    parser.add_argument(
+        '-jid',
+        '--job_id',
+        type=str,
+        default=None,
+        help='Optional job ID to be used in intermediate files. Default: current date and time',
+    )
 
     args = parser.parse_args()
 
     if args.output is None:
         args.output = args.target.with_suffix(".filtered")
-    args.now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S_")
+    if args.job_id is None:
+        args.job_id = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
-    args.now = '2024_10_17_16_01_21_'
     return args
 
 
@@ -143,14 +150,14 @@ def main():
         all_records.append(record)
 
     # write combined file
-    with open(f"{args.now}combined.fasta", "w") as f:
+    with open(f"{args.job_id}_combined.fasta", "w") as f:
         SeqIO.write(all_records, f, "fasta")
 
     # cluster sequences
-    results = cd_hit(f"{args.now}combined.fasta", f"{args.now}combined_out.fasta")
+    results = cd_hit(f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta")
 
     for source_file, seq_hash in digest_clusters(
-        Path(f"{args.now}combined_out.fasta.clstr")
+        Path(f"{args.job_id}_combined_out.fasta.clstr")
     ):
         if source_file == args.target.stem:
             if seq_hash not in target_hash_lookup:
