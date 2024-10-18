@@ -109,7 +109,6 @@ def digest_clusters(cluster_file_path):
         # skip non-mixed clusters
         source_files = [x.split("@@@")[0] for x in descriptions]
         if len(set(source_files)) == 1:
-            print(source_files, descriptions)
             continue
 
         for line in descriptions:
@@ -161,7 +160,7 @@ def main():
     for source_file, seq_hash in digest_clusters(
         Path(f"{args.job_id}_combined_out.fasta.clstr")
     ):
-        print(source_file, args.target.stem)
+        print(source_file, seq_hash, args.target.stem)
         if source_file == args.target.stem:
             if seq_hash not in target_hash_lookup:
                 raise ValueError(
