@@ -125,11 +125,12 @@ def main():
 
     # combine files with hashed headers
     for record in SeqIO.parse(args.target, "fasta"):
-        file_stem = args.target.stem
+        file_stem = args.reference.stem
 
         seq_hash = str(hash(record.seq))
-        target_hash_lookup[seq_hash] = (record.description, record.seq)
-        record.description = f"{file_stem}@@@{seq_hash}"
+        record.id = f"{file_stem}@@@{seq_hash}"
+        record.name = ""
+        record.description = ""
         all_records.append(record)
 
     for record in SeqIO.parse(args.reference, "fasta"):
@@ -143,10 +144,8 @@ def main():
 
     # write combined file
     with open(f"{args.now}combined.fasta", "w") as f:
-        for record in all_records:
-            f.write(f">{record.id}\n{record.seq}\n")
+        SeqIO.write(all_records, f, "fasta")
 
-    assert False
     # cluster sequences
     results = cd_hit(f"{args.now}combined.fasta", f"{args.now}combined_out.fasta")
 
