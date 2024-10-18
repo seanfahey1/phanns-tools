@@ -139,14 +139,14 @@ def main():
         record.id = f"{file_stem}@@@{seq_hash}"
         record.name = ""
         record.description = ""
-        print(record)
         all_records.append(record)
-        assert False
+
     # write combined file
     with open(f"{args.now}combined.fasta", "w") as f:
         for record in all_records:
             f.write(f">{record.id}\n{record.seq}\n")
 
+    assert False
     # cluster sequences
     results = cd_hit(f"{args.now}combined.fasta", f"{args.now}combined_out.fasta")
 
