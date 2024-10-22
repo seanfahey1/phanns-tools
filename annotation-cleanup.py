@@ -60,8 +60,15 @@ def main():
 
     with open(args.fasta, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
+            match = re.search("(.*)(\[.*\])", record.description)
+
+            if not match:
+                record_without_species = record.description
+            else:
+                record_without_species = match.group(1)
+
             for term in terms_list:
-                if re.search(term, record.description, re.IGNORECASE):
+                if re.search(term, record_without_species, re.IGNORECASE):
                     print(
                         f"Removing {record.id} with description: {record.description}"
                     )
