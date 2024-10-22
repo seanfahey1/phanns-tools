@@ -178,9 +178,10 @@ def main():
             print("\tRemoved:", removed_record[0])
 
     write_dict_to_fasta(target_hash_lookup, args.output)
-    write_dict_to_fasta(
-        removed_records, f"{args.output.with_name(args.output.stem + '_removed.fasta')}"
+    removed_file_name = (
+        Path(args.output).resolve().parent / f"{args.output.stem}_removed.fasta"
     )
+    write_dict_to_fasta(removed_records, removed_file_name)
 
 
 if __name__ == "__main__":
