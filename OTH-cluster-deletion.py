@@ -48,11 +48,11 @@ def get_args():
         help='Output fasta file. Default: target file with suffix ".filtered.fasta"',
     )
     parser.add_argument(
-        '-jid',
-        '--job_id',
+        "-jid",
+        "--job_id",
         type=str,
         default=None,
-        help='Optional job ID to be used in intermediate files. Default: current date and time',
+        help="Optional job ID to be used in intermediate files. Default: current date and time",
     )
 
     args = parser.parse_args()
@@ -99,9 +99,13 @@ def digest_clusters(cluster_file_path):
         descriptions = []
         for line in cluster_lines:
             try:
-                descriptions.append(str(re.search("\d+aa,\s+>(.*@@@-?\d*)\.\.\.", line).group(1)))
+                descriptions.append(
+                    str(re.search("\d+aa,\s+>(.*@@@-?\d*)\.\.\.", line).group(1))
+                )
             except AttributeError:
-                raise AttributeError(f"Could not parse line:\n{line}\nfrom cluster:\n{cluster}")
+                raise AttributeError(
+                    f"Could not parse line:\n{line}\nfrom cluster:\n{cluster}"
+                )
 
         # skip non-mixed clusters
         source_files = [x.split("@@@")[0] for x in descriptions]
@@ -155,7 +159,9 @@ def main():
 
     # cluster sequences
     print("Clustering sequences")
-    results = cd_hit(f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta")
+    results = cd_hit(
+        f"{args.job_id}_combined.fasta", f"{args.job_id}_combined_out.fasta"
+    )
 
     print("Searching clusters")
     for source_file, seq_hash in digest_clusters(
