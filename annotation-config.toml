@@ -1,12 +1,19 @@
 ["terms"]
-CTF = ["collar", "tail fiber", "tail-fiber"]
-BPL = ["baseplate", "base plate"]
+CTF = ["collar", "tail fiber", "tail-fiber", "tail_fiber"]
+BPL = ["baseplate", "base plate", "base-plate", "base_plate"]
 TSP = ["tail spike", "tail-spike", "tailspike", "spike"]
-MCP = ["major capsid", "major-capsid"]
-MTL = ["major tail", "major-tail"]
-m_CP = ["minor capsid", "minor-capsid"]
-m_TL = ["minor tail", "minor-tail"]
+MCP = ["major capsid", "major-capsid", "major_capsid"]
+MTL = ["major tail", "major-tail", "major_tail"]
+m_CP = ["minor capsid", "minor-capsid", "minor_capsid"]
+m_TL = ["minor tail", "minor-tail", "minor_tail"]
 PTL = ["portal"]
-TSH = ["shaft", "shaft", "sheath"]
-HTJ = ["HTJ", "head-tail", "head tail", "head to tail", "head assembly", "head completion", "head core"]
-PHD = ["phage head", "phage-head"]
+TSH = ["shaft", "sheath"]
+HTJ = [
+    "HTJ", 
+    "head tail", "head-tail", "head_tail", 
+    "head to tail", "head-to-tail", "head_to_tail", 
+    "head assembly", "head-assembly", "head_assembly",
+    "head completion", "head-completion", "head_completion",
+    "head core", "head-core", "head_core",
+    ]
+PHD = ["phage head", "phage-head", "phage_head"]

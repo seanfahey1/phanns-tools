@@ -30,7 +30,7 @@ def get_args():
     )
     parser.add_argument(
         "-c",
-        "config",
+        "--config",
         type=validate_path,
         required=True,
         help="Path to the configuration file with 'terms' section.",
@@ -47,8 +47,11 @@ def get_args():
 
 def main():
     args = get_args()
+    print(f"Parsing FASTA file: {args.fasta}")
+
     config = toml.load(args.config)
 
+    print(f"Ignoring keys: {args.ignore}")
     all_keys = [x for x in config["terms"].keys() if x != args.ignore]
     terms_list = []
 
@@ -65,6 +68,8 @@ def main():
                     break
                 else:
                     SeqIO.write(record, args.output, "fasta")
+
+    print("Sequences removed successfully.")
 
 
 if __name__ == "__main__":
