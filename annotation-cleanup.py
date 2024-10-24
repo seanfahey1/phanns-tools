@@ -36,7 +36,7 @@ def get_args():
         help="Path to the configuration file with 'terms' section.",
     )
     parser.add_argument(
-        "--ignore", type=str, required=False, help="Keys in the config file to ignore"
+        "--ignore", type=str, required=False, help="Keys in the config file to ignore, separated by commas."
     )
     parser.add_argument(
         "-o", "--output", type=str, required=True, help="Path to the output file."
@@ -52,7 +52,12 @@ def main():
     config = toml.load(args.config)
 
     print(f"Ignoring keys: {args.ignore}")
-    all_keys = [x for x in config["terms"].keys() if x != args.ignore]
+    ignore = args.ignore.split(",") if args.ignore else []
+
+    if args.ignore != []:
+        assert all(x in config["terms"] for x in ignore), "Some ignore keys are not present in the config file."
+
+    all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
     terms_list = []
 
     for key in all_keys:
