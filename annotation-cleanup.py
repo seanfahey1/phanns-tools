@@ -57,11 +57,15 @@ def main():
     if args.ignore != []:
         assert all(x in config["terms"] for x in ignore), "Some ignore keys are not present in the config file."
 
+    ignore_terms = [term for key in ignore for term in config["terms"][key]]
+
     all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
     terms_list = []
 
     for key in all_keys:
-        terms_list.extend(config["terms"][key])
+        for term in config["terms"][key]:
+            if term not in ignore_terms:
+                terms_list.append(term)
 
     keep = []
     with open(args.fasta, "r") as handle:
