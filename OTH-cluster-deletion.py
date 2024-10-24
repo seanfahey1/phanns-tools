@@ -179,7 +179,7 @@ def main():
 
     write_dict_to_fasta(target_hash_lookup, args.output)
     removed_file_name = (
-        Path(args.output).resolve().parent / f"{args.output.stem}_removed.fasta"
+        Path(args.output).resolve().parent / f"{Path(args.output).stem}_removed.fasta"
     )
     write_dict_to_fasta(removed_records, removed_file_name)
 
