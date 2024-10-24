@@ -63,6 +63,7 @@ def main():
     for key in all_keys:
         terms_list.extend(config["terms"][key])
 
+    keep = []
     with open(args.fasta, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
             match = re.search("(.*)(\[.*\])", record.description)
@@ -79,8 +80,9 @@ def main():
                     )
                     break
                 else:
-                    SeqIO.write(record, args.output, "fasta")
+                    keep.append(record)
 
+    SeqIO.write(keep, args.output, "fasta")
     print("Sequences removed successfully.")
 
 
