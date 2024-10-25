@@ -36,10 +36,17 @@ def get_args():
         help="Path to the configuration file with 'terms' section.",
     )
     parser.add_argument(
-        "--use", type=str, required=False, default="*", help="Keys in the config file to use, separated by commas"
+        "--use",
+        type=str,
+        required=False,
+        default="*",
+        help="Keys in the config file to use, separated by commas",
     )
     parser.add_argument(
-        "--ignore", type=str, required=False, help="Keys in the config file to ignore, separated by commas."
+        "--ignore",
+        type=str,
+        required=False,
+        help="Keys in the config file to ignore, separated by commas.",
     )
     parser.add_argument(
         "-o", "--output", type=str, required=True, help="Path to the output file."
@@ -58,7 +65,9 @@ def main():
     ignore = args.ignore.split(",") if args.ignore else []
 
     if args.ignore != []:
-        assert all(x in config["terms"] for x in ignore), "Some ignore keys are not present in the config file."
+        assert all(
+            x in config["terms"] for x in ignore
+        ), "Some ignore keys are not present in the config file."
 
     ignore_terms = [term for key in ignore for term in config["terms"][key]]
 
@@ -66,7 +75,9 @@ def main():
         all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
     else:
         use = args.use.split(",")
-        all_keys = [x for x in config["terms"].keys() if x not in args.ignore and x in use]
+        all_keys = [
+            x for x in config["terms"].keys() if x not in args.ignore and x in use
+        ]
     terms_list = []
 
     for key in all_keys:
