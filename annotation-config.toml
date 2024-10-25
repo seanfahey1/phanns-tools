@@ -22,3 +22,4 @@ HTJ = [
     "head core", "head-core", "head_core",
     ]
 PHD = ["phage head", "phage-head", "phage_head"]
+ALL = ["scaffold", "head maturation"]

@@ -36,6 +36,9 @@ def get_args():
         help="Path to the configuration file with 'terms' section.",
     )
     parser.add_argument(
+        "--use", type=str, required=False, default="*", help="Keys in the config file to use, separated by commas"
+    )
+    parser.add_argument(
         "--ignore", type=str, required=False, help="Keys in the config file to ignore, separated by commas."
     )
     parser.add_argument(
@@ -59,7 +62,11 @@ def main():
 
     ignore_terms = [term for key in ignore for term in config["terms"][key]]
 
-    all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
+    if args.use == "*":
+        all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
+    else:
+        use = args.use.split(",")
+        all_keys = [x for x in config["terms"].keys() if x not in args.ignore and x in use]
     terms_list = []
 
     for key in all_keys:
@@ -68,6 +75,7 @@ def main():
                 terms_list.append(term)
 
     keep = []
+    discarded = []
     with open(args.fasta, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
             match = re.search("(.*)(\[.*\])", record.description)
@@ -82,11 +90,13 @@ def main():
                     print(
                         f"Removing {record.id} with description: {record.description}"
                     )
+                    discarded.append(record)
                     break
                 else:
                     keep.append(record)
 
     SeqIO.write(keep, args.output, "fasta")
+    SeqIO.write(discarded, Path(args.output).with_suffix(".discarded.fasta"), "fasta")
     print("Sequences removed successfully.")
 
 
