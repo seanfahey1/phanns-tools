@@ -87,6 +87,9 @@ def main():
             if term not in ignore_terms:
                 terms_list.append(term)
 
+    print(f"Using keys: {all_keys}")
+    print(f"Using terms: {terms_list}")
+
     keep = []
     discarded = []
     with open(args.fasta, "r") as handle:
