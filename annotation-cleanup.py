@@ -66,7 +66,7 @@ def main():
     print(f"Ignoring keys: {args.ignore}")
     ignore = args.ignore.split(",") if args.ignore else []
 
-    if args.ignore != []:
+    if ignore != []:
         assert all(
             x in config["terms"] for x in ignore
         ), "Some ignore keys are not present in the config file."
@@ -74,11 +74,11 @@ def main():
     ignore_terms = [term for key in ignore for term in config["terms"][key]]
 
     if args.use == "*":
-        all_keys = [x for x in config["terms"].keys() if x not in args.ignore]
+        all_keys = [x for x in config["terms"].keys() if x not in ignore]
     else:
         use = args.use.split(",")
         all_keys = [
-            x for x in config["terms"].keys() if x not in args.ignore and x in use
+            x for x in config["terms"].keys() if x not in ignore and x in use
         ]
     terms_list = []
 
