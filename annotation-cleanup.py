@@ -101,15 +101,17 @@ def main():
             else:
                 record_without_species = match.group(1)
 
+            found = False
             for term in terms_list:
                 if re.search(term, record_without_species, re.IGNORECASE):
                     print(
                         f"Removing {record.id} with description: {record.description}"
                     )
                     discarded.append(record)
+                    found = True
                     break
-                else:
-                    keep.append(record)
+            if not found:
+                keep.append(record)
 
     SeqIO.write(keep, args.output, "fasta")
     SeqIO.write(discarded, Path(args.output).with_suffix(".discarded.fasta"), "fasta")
