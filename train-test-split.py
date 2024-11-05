@@ -110,7 +110,7 @@ def main():
 
     # Parse the cd-hit output file
     outputs = defaultdict(list)
-    cluster_write_order = cycle(range(1, args.Number + 1) + range(args.Number, 0, -1))
+    cluster_write_order = cycle(list(range(1, args.Number + 1)) + list(range(args.Number, 0, -1)))
     for hash_str in fetch_clusters(cd_hit_output):
         original_record = hash_lookup[hash_str]
         file_number = next(cluster_write_order)
