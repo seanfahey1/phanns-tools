@@ -78,7 +78,6 @@ def hash_headers(fasta):
         temp_file_path = temp_file.name
         print(f"Writing hashed records to temporary file {temp_file_path}...")
         SeqIO.write(hashed_records, temp_file_path, "fasta")
-    SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
 
     return hash_lookup, Path(temp_file_path)
 
