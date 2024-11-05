@@ -51,6 +51,7 @@ def call_cd_hit(fasta, cd_hit, output):
     print(f"Running cd-hit with command: {cmd}")
 
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    print(f"CD-hit output written to {output}")
     print(result.stdout)
 
 
@@ -77,6 +78,7 @@ def hash_headers(fasta):
 
 
 def fetch_clusters(cd_hit_output):
+    print(f"Opening {cd_hit_output}")
     hash_pattern = re.compile("\d+\s\d+aa,\s(?P<hash_str>-?[0-9]*)\.\.\.")
 
     with open(cd_hit_output) as file:
@@ -112,6 +114,7 @@ def main():
     print("Writing output files...")
     for key, records in outputs.items():
         output_file = f"{key}_{args.fasta.stem}.fasta"
+        print(f"\tWriting {len(records)} records to {output_file}")
         SeqIO.write(records, output_file, "fasta")
 
     # Remove the temporary file after it's no longer needed
