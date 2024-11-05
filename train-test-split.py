@@ -77,7 +77,7 @@ def hash_headers(fasta):
         temp_file_path = temp_file.name
         print(f"Writing hashed records to temporary file {temp_file_path}...")
         SeqIO.write(hashed_records, temp_file_path, "fasta")
-    # SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
+    SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
 
     return hash_lookup, Path(temp_file_path)
 
@@ -93,7 +93,6 @@ def fetch_clusters(cd_hit_output):
     print(f"Parsing {len(clusters)} clusters from cd-hit output")
     for i, cluster in enumerate(clusters):
         cluster = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
-        print(cluster)
         hashes = [hash_pattern.match(line).group("hash_str") for line in cluster]
 
         for hash_str in hashes:
