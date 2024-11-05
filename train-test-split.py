@@ -92,12 +92,12 @@ def fetch_clusters(cd_hit_output):
         clusters = file.split(">Cluster")[1:]
 
     print(f"Parsing {len(clusters)} clusters from cd-hit output")
-    for cluster in clusters:
+    for cluster_number, cluster in enumerate(clusters):
         cluster = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
         hashes = [hash_pattern.match(line).group("hash_str") for line in cluster]
 
         for hash_str in hashes:
-            yield hash_str
+            yield cluster_number, hash_str
 
 
 def main():
@@ -111,9 +111,13 @@ def main():
     # Parse the cd-hit output file
     outputs = defaultdict(list)
     cluster_write_order = cycle(list(range(1, args.Number + 1)) + list(range(args.Number, 0, -1)))
-    for hash_str in fetch_clusters(cd_hit_output):
+    previous_cluster = None
+    file_number = None
+    for cluster_number, hash_str in fetch_clusters(cd_hit_output):
         original_record = hash_lookup[hash_str]
-        file_number = next(cluster_write_order)
+        if cluster_number != previous_cluster:
+            file_number = next(cluster_write_order)
+            previous_cluster = cluster_number
         outputs[file_number].append(original_record)
 
     # Write the output files
