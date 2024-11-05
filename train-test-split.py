@@ -46,13 +46,18 @@ def get_args():
     return parser.parse_args()
 
 
-def call_cd_hit(fasta, cd_hit, output):
-    cmd = f"{cd_hit} -i {fasta} -o {output} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
-    print(f"Running cd-hit with command: {cmd}")
+def call_cd_hit(fasta, cd_hit):
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_file_path = temp_file.name
 
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    print(f"CD-hit output written to {output}")
+        cmd = f"{cd_hit} -i {fasta} -o {temp_file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
+        print(f"Running cd-hit with command: {cmd}")
+
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        print(f"Writing cd-hit output to temporary file {temp_file_path}...")
+
     print(result.stdout)
+    return temp_file_path
 
 
 def hash_headers(fasta):
@@ -69,8 +74,8 @@ def hash_headers(fasta):
         hashed_records.append(record)
 
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        print(f"Writing hashed records to temporary file {tempfile}...")
         temp_file_path = temp_file.name
+        print(f"Writing hashed records to temporary file {temp_file_path}...")
         SeqIO.write(hashed_records, temp_file_path, "fasta")
     # SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
 
@@ -100,8 +105,7 @@ def main():
     hash_lookup, temp_file_path = hash_headers(args.fasta)
 
     # Call the cd-hit function with the temporary file
-    cd_hit_output = temp_file_path.parent / "cd-hit_output.fasta"
-    call_cd_hit(temp_file_path, args.cd_hit, cd_hit_output)
+    cd_hit_output = call_cd_hit(temp_file_path, args.cd_hit)
 
     # Parse the cd-hit output file
     outputs = defaultdict(list)
