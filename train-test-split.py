@@ -93,6 +93,7 @@ def fetch_clusters(cd_hit_output):
     print(f"Parsing {len(clusters)} clusters from cd-hit output")
     for i, cluster in enumerate(clusters):
         cluster = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
+        print(cluster)
         hashes = [hash_pattern.match(line).group("hash_str") for line in cluster]
 
         for hash_str in hashes:
@@ -121,8 +122,9 @@ def main():
         print(f"\tWriting {len(records)} records to {output_file}")
         SeqIO.write(records, output_file, "fasta")
 
-    # Remove the temporary file after it's no longer needed
+    # Remove the temporary files after it's no longer needed
     os.remove(temp_file_path)
+    os.remove(cd_hit_output)
 
 
 if __name__ == "__main__":
