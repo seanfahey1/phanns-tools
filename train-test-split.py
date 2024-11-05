@@ -68,8 +68,8 @@ def hash_headers(fasta):
         record.description = ""
         hashed_records.append(record)
 
-    print("Writing hashed records to temporary file...")
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        print(f"Writing hashed records to temporary file {tempfile}...")
         temp_file_path = temp_file.name
         SeqIO.write(hashed_records, temp_file_path, "fasta")
     # SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
