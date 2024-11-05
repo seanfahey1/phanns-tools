@@ -56,7 +56,7 @@ def call_cd_hit(fasta, cd_hit):
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         print(f"Writing cd-hit output to temporary file {temp_file_path}...")
 
-    print(result.stdout)
+    # print(result.stdout)
     return temp_file_path
 
 
@@ -67,7 +67,7 @@ def hash_headers(fasta):
     print("Hashing headers...")
     for record in SeqIO.parse(fasta, "fasta"):
         hash_value = hash(record.seq)
-        hash_lookup[hash_value] = copy(record)
+        hash_lookup[str(hash_value)] = copy(record)
 
         record.id = str(hash_value)
         record.description = ""
