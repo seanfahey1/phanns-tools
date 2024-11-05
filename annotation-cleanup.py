@@ -77,9 +77,7 @@ def main():
         all_keys = [x for x in config["terms"].keys() if x not in ignore]
     else:
         use = args.use.split(",")
-        all_keys = [
-            x for x in config["terms"].keys() if x not in ignore and x in use
-        ]
+        all_keys = [x for x in config["terms"].keys() if x not in ignore and x in use]
     terms_list = []
 
     for key in all_keys:

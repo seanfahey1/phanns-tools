@@ -71,7 +71,7 @@ def hash_headers(fasta):
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file_path = temp_file.name
         SeqIO.write(hashed_records, temp_file_path, "fasta")
-    SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
+    # SeqIO.write(hashed_records, "testing_cd_hit_hashing.fasta", "fasta")
 
     return hash_lookup, Path(temp_file_path)
 
@@ -100,6 +100,7 @@ def main():
     # Call the cd-hit function with the temporary file
     cd_hit_output = temp_file_path.parent / "cd-hit_output.fasta"
     call_cd_hit(temp_file_path, args.cd_hit, cd_hit_output)
+
     # Parse the cd-hit output file
     outputs = defaultdict(list)
     for cluster_number, hash_str in fetch_clusters(cd_hit_output):
@@ -110,7 +111,7 @@ def main():
     # Write the output files
     print("Writing output files...")
     for key, records in outputs.items():
-        output_file = f"{args.fasta.stem}_group_{key}.fasta"
+        output_file = f"{key}_{args.fasta.stem}.fasta"
         SeqIO.write(records, output_file, "fasta")
 
     # Remove the temporary file after it's no longer needed
