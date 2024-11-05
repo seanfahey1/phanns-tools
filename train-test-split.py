@@ -86,7 +86,7 @@ def fetch_clusters(cd_hit_output):
     print(f"Opening {cd_hit_output}")
     hash_pattern = re.compile("\d+\s\d+aa,\s(?P<hash_str>-?[0-9]*)\.\.\.")
 
-    with open(cd_hit_output) as file:
+    with open(cd_hit_output + '.clstr') as file:
         file = file.read()
         clusters = file.split(">Cluster")[1:]
 
