@@ -2,6 +2,7 @@ import argparse
 import os
 import re
 import subprocess
+from itertools import cycle
 import sys
 from copy import copy
 import tempfile
@@ -91,12 +92,12 @@ def fetch_clusters(cd_hit_output):
         clusters = file.split(">Cluster")[1:]
 
     print(f"Parsing {len(clusters)} clusters from cd-hit output")
-    for i, cluster in enumerate(clusters):
+    for cluster in clusters:
         cluster = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
         hashes = [hash_pattern.match(line).group("hash_str") for line in cluster]
 
         for hash_str in hashes:
-            yield i, hash_str
+            yield hash_str
 
 
 def main():
@@ -109,9 +110,10 @@ def main():
 
     # Parse the cd-hit output file
     outputs = defaultdict(list)
-    for cluster_number, hash_str in fetch_clusters(cd_hit_output):
+    cluster_write_order = cycle(range(1, args.Number + 1) + range(args.Number, 0, -1))
+    for hash_str in fetch_clusters(cd_hit_output):
         original_record = hash_lookup[hash_str]
-        file_number = (cluster_number % args.Number) + 1
+        file_number = next(cluster_write_order)
         outputs[file_number].append(original_record)
 
     # Write the output files
