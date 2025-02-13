@@ -48,7 +48,7 @@ def main():
         # Split the records into N sub-files
         sub_files = [[] for _ in range(args.number)]
         for i, record in enumerate(records):
-            sub_files[i % args.Number].append(record)
+            sub_files[i % args.number].append(record)
 
         # Write the sub-files
         for i, sub_file in enumerate(sub_files, 1):
