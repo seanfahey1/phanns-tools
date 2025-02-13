@@ -13,7 +13,6 @@ authors = [
 dependencies = [
     "biopython==1.84",
     "numpy==2.1.2",
-    "pip==22.3.1",
     "setuptools==65.5.0",
     "toml==0.10.2"
 ]
