@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import argparse
+import random
 import sys
 from pathlib import Path
 
 from Bio import SeqIO
-import random
 
 
 def validate_path(path):
@@ -55,6 +55,7 @@ def main():
             output_file = f"{i}_{args.fasta.stem}.fasta"
             print(f"\tWriting {len(sub_file)} records to {output_file}")
             SeqIO.write(sub_file, output_file, "fasta")
+
 
 if __name__ == "__main__":
     sys.exit(main())

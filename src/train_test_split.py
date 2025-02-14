@@ -4,11 +4,11 @@ import argparse
 import os
 import re
 import subprocess
-from itertools import cycle
 import sys
-from copy import copy
 import tempfile
 from collections import defaultdict
+from copy import copy
+from itertools import cycle
 from pathlib import Path
 
 from Bio import SeqIO
@@ -53,7 +53,9 @@ def call_cd_hit(fasta, cd_hit):
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file_path = temp_file.name
 
-        cmd = f"{cd_hit} -i {fasta} -o {temp_file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
+        cmd = (
+            f"{cd_hit} -i {fasta} -o {temp_file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
+        )
         print(f"Running cd-hit with command: {cmd}")
 
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
@@ -88,7 +90,7 @@ def fetch_clusters(cd_hit_output):
     print(f"Opening {cd_hit_output}")
     hash_pattern = re.compile("\d+\s\d+aa,\s>(?P<hash_str>-?[0-9]*)\.\.\.")
 
-    with open(cd_hit_output + '.clstr') as file:
+    with open(cd_hit_output + ".clstr") as file:
         file = file.read()
         clusters = file.split(">Cluster")[1:]
 
@@ -111,7 +113,9 @@ def main():
 
     # Parse the cd-hit output file
     outputs = defaultdict(list)
-    cluster_write_order = cycle(list(range(1, args.Number + 1)) + list(range(args.Number, 0, -1)))
+    cluster_write_order = cycle(
+        list(range(1, args.Number + 1)) + list(range(args.Number, 0, -1))
+    )
     previous_cluster = None
     file_number = None
     for cluster_number, hash_str in fetch_clusters(cd_hit_output):
