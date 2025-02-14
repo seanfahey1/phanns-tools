@@ -38,11 +38,13 @@ def get_args():
 
 
 def main():
+    random.seed(100)
     args = get_args()
 
     with open(args.fasta, "r") as f:
         records = list(SeqIO.parse(f, "fasta"))
         # Shuffle the records to ensure randomness
+
         random.shuffle(records)
 
         # Split the records into N sub-files
