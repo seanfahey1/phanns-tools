@@ -42,3 +42,4 @@ packages = ["src"]
 annotation_cleanup = "src.annotation_cleanup:main"
 cluster_deletion = "src.OTH_cluster_deletion:main"
 train_test_split_random = "src.train_test_split_random:main"
+cluster_deletion_2d = "src.cluster_deletion_2d:main"
