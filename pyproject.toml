@@ -13,6 +13,7 @@ authors = [
 dependencies = [
     "biopython==1.84",
     "numpy==2.1.2",
+    "plotly==6.0.0",
     "setuptools==65.5.0",
     "toml==0.10.2"
 ]
@@ -43,3 +44,4 @@ annotation_cleanup = "src.annotation_cleanup:main"
 cluster_deletion = "src.OTH_cluster_deletion:main"
 train_test_split_random = "src.train_test_split_random:main"
 cluster_deletion_2d = "src.cluster_deletion_2d:main"
+confusion_matrix = "src.confusion_matrix:main"
