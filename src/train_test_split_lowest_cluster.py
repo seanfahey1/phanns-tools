@@ -33,7 +33,7 @@ def get_args():
         "--fasta",
         type=validate_path,
         required=True,
-        help="Path to the FASTA file to be cleaned up.",
+        help="Path to the FASTA file to be split.",
     )
     parser.add_argument(
         "-n", "--Number", type=int, default=11, help="Number of groups to split into."
@@ -45,14 +45,25 @@ def get_args():
         default="cd-hit",
         help="Path to the cd-hit program.",
     )
+    parser.add_argument(
+        "-notmp", "--no_temp_dir", action="store_true", help="Don't use a temporary directory for intermediate files."
+    )
 
     return parser.parse_args()
 
 
-def call_cd_hit(fasta, cd_hit):
+def call_cd_hit(fasta, cd_hit, no_tmp_dir=False):
+    if no_tmp_dir:
+        Path('cd_hit_temp').mkdir(exist_ok=True)
+        file_path = Path('cd_hit_temp') / (fasta.name + '.clstr')
+        cmd = (
+            f"{cd_hit} -i {fasta} -o {file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
+        )
+        print(f"Running cd-hit with command: {cmd}")
+        return file_path
+
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file_path = temp_file.name
-
         cmd = (
             f"{cd_hit} -i {fasta} -o {temp_file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
         )
@@ -60,9 +71,7 @@ def call_cd_hit(fasta, cd_hit):
 
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         print(f"Writing cd-hit output to temporary file {temp_file_path}...")
-
-    # print(result.stdout)
-    return temp_file_path
+        return temp_file_path
 
 
 def hash_headers(fasta):
@@ -118,7 +127,7 @@ def main():
     hash_lookup, temp_file_path = hash_headers(args.fasta)
 
     # Call the cd-hit function with the temporary file
-    cd_hit_output = call_cd_hit(temp_file_path, args.cd_hit)
+    cd_hit_output = call_cd_hit(temp_file_path, args.cd_hit, args.no_temp_dir)
 
     # Parse the cd-hit output file
     outputs = defaultdict(list)
