@@ -55,7 +55,7 @@ def get_args():
 def call_cd_hit(fasta, cd_hit, no_tmp_dir=False):
     if no_tmp_dir:
         Path('cd_hit_temp').mkdir(exist_ok=True)
-        file_path = Path('cd_hit_temp') / (str(fasta.name) + '.clstr')
+        file_path = str(Path('cd_hit_temp') / (str(fasta.name) + '.clstr'))
         cmd = (
             f"{cd_hit} -i {fasta} -o {file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
         )
