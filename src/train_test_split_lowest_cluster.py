@@ -108,8 +108,9 @@ def fetch_clusters(cd_hit_output):
     for cluster_number, cluster in enumerate(clusters):
         cluster = [x.strip() for x in cluster.split("\n") if x.strip() != ""][1:]
         hashes = [hash_pattern.match(line).group("hash_str") for line in cluster]
+        print(f"\tFound {len(hashes)} sequences in cluster {cluster_number}")
 
-    return cluster_number, hashes
+        yield hashes
 
 
 def lowest_split(outputs, expected_splits):
@@ -133,8 +134,7 @@ def main():
     # Parse the cd-hit output file
     outputs = defaultdict(list)
 
-    previous_cluster = None
-    for _, hash_list in fetch_clusters(cd_hit_output):
+    for hash_list in fetch_clusters(cd_hit_output):
         split_number = lowest_split(outputs, args.Number)
 
         for hash_str in hash_list:
