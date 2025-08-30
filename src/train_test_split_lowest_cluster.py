@@ -136,6 +136,7 @@ def main():
 
     for hash_list in fetch_clusters(cd_hit_output):
         split_number = lowest_split(outputs, args.Number)
+        print(f"Assigning cluster with {len(hash_list)} sequences to split # {split_number} ({args.fasta})")
 
         for hash_str in hash_list:
             original_record = hash_lookup[hash_str]
