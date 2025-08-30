@@ -59,6 +59,7 @@ def call_cd_hit(fasta, cd_hit, no_tmp_dir=False):
         cmd = (
             f"{cd_hit} -i {fasta} -o {file_path} -c 0.4 -n 2 -d 0 -M 0 -T 0 -sc 1"
         )
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         print(f"Running cd-hit with command: {cmd}")
         return file_path
 
