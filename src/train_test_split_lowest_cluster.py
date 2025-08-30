@@ -115,7 +115,7 @@ def fetch_clusters(cd_hit_output):
 
 def lowest_split(outputs, expected_splits):
     if len(outputs) < expected_splits:
-        return max(outputs.keys()) + 1
+        return len(outputs.keys()) + 1
 
     min_size = min(len(v) for v in outputs.values())
     for key, records in outputs.items():
